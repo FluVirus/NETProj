@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Application.Registration.Commands;
 
-public class RegisterNewUserCommand: IRequest<RegisterNewUserResult>
+public class RegisterNewUserCommand: IRequest<Unit>
 {
     public required string Email { get; init; }
 
@@ -16,5 +16,5 @@ public class RegisterNewUserCommand: IRequest<RegisterNewUserResult>
 
     public required string UserName { get; init; }
 
-    public required Role[] Roles { get; init; }
+    public required IEnumerable<Role> Roles { get; init; }
 }

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Identity.Application.Login.Commands;
 
-public class LoginUserCommand : IRequest<LoginUserResult>
+public class LoginUserCommand : IRequest<Unit>
 {
     public required string Email { get; init; }
+
     public required string Password { get; init; }
 }

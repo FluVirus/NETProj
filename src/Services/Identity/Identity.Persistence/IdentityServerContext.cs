@@ -9,6 +9,7 @@ public class IdentityServerContext : IdentityDbContext<User, Role, int, UserClai
 
     public IdentityServerContext(DbContextOptions<IdentityServerContext> options) : base(options)
     {
+        Database.EnsureDeleted();
         Database.EnsureCreated();
         //AttachRange(Role.Customer, Role.Driver);
     }

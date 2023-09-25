@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Application.Login.Commands;
 
-public class LoginUserHandler: IRequestHandler<LoginUserCommand, LoginUserResult>
+public class LoginUserHandler: IRequestHandler<LoginUserCommand, Unit>
 {
     private readonly UserManager<User>  _userManager;
     private readonly SignInManager<User> _signInManager;
@@ -21,22 +21,17 @@ public class LoginUserHandler: IRequestHandler<LoginUserCommand, LoginUserResult
         _signInManager = signInManager;
     }
 
-    public async Task<LoginUserResult> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         User? user = await _userManager.FindByEmailAsync(request.Email);
+
         if (user is null)
         {
             throw new EmailNotFoundException("Email not found", request.Email);
         }
 
-        SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: false, lockoutOnFailure: false);
+        SignInResult signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
 
-        return new LoginUserResult
-        {
-            Succeeded = signInResult.Succeeded,
-            IsNotAllowed = signInResult.IsNotAllowed,
-            IsLockedOut = signInResult.IsLockedOut,
-            RequiresTwoFactor = signInResult.RequiresTwoFactor
-        };
+        return Unit.Value;
     }
 }

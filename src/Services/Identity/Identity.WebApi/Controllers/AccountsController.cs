@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using FluentValidation;
-using FluentValidation.Results;
 using Identity.Application.Login.Commands;
+using Identity.Application.Refresh.Commands;
 using Identity.Application.Registration.Commands;
 using Identity.WebApi.Models;
 using MediatR;
@@ -22,37 +21,39 @@ public class AccountsController: ControllerBase<AccountsController>
     base(logger, mediator, mapper)  { }
 
     [HttpPost]
-    public async Task<IActionResult> SignUp([FromForm] SignUpModel signUpModel, [FromServices] IValidator<SignUpModel> validator)
-    {
-        ValidationResult validationResult = await validator.ValidateAsync(signUpModel);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors);
-        }
+    public async Task<IActionResult> SignUp([FromBody] SignUpViewModel signUpViewModel)
+    {       
+        RegisterNewUserCommand command = _mapper.Map<RegisterNewUserCommand>(signUpViewModel);
 
-        RegisterNewUserCommand command = _mapper.Map<RegisterNewUserCommand>(signUpModel);
-        RegisterNewUserResult commandResult = await _mediator.Send(command);
+        await _mediator.Send(command, HttpContext.RequestAborted);
 
-        return commandResult.Status ? Ok() : throw new Exception("Internal Server Error");
+        return Ok();
     }
 
-    public async Task<IActionResult> SignIn([FromForm] SignInModel signInModel, [FromServices] IValidator<SignInModel> validator)
+    [HttpPost]
+    public async Task<IActionResult> SignIn([FromForm] SignInViewModel signInViewModel)
     {
-        ValidationResult validationResult = await validator.ValidateAsync(signInModel);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors);
-        }
+        LoginUserCommand command = _mapper.Map<LoginUserCommand>(signInViewModel);
 
-        LoginUserCommand command = _mapper.Map<LoginUserCommand>(signInModel);
-        LoginUserResult commandResult = await _mediator.Send(command);
+        await _mediator.Send(command, HttpContext.RequestAborted);
 
-        return commandResult.Succeeded ? Ok() : throw new Exception("Internal Server Error");
+        return Ok();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Refresh([FromForm] RefreshViewModel refreshViewModel)
+    {
+        RefreshSignInCommand command = _mapper.Map<RefreshSignInCommand>(refreshViewModel);
+
+        await _mediator.Send(command, HttpContext.RequestAborted);
+
+        return Ok();
+    }
+
+    [HttpPost]
     public Task<IActionResult> SignOut()
     {
-        //TODO: Handle SignOut
+        //TODO: Handle SignOut need redirect. Where to redirect?
         throw new NotImplementedException();
     }
 }

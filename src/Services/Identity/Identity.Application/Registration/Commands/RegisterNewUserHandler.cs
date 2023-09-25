@@ -11,17 +11,18 @@ using System.Threading.Tasks;
 
 namespace Identity.Application.Registration.Commands;
 
-internal class RegisterNewUserHandler : IRequestHandler<RegisterNewUserCommand, RegisterNewUserResult>
+internal class RegisterNewUserHandler : IRequestHandler<RegisterNewUserCommand, Unit>
 {
     private UserManager<User> _userManager;
+
     public RegisterNewUserHandler(UserManager<User> userManager) 
     {
         _userManager = userManager;
     }
     
-    public async Task<RegisterNewUserResult> Handle(RegisterNewUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RegisterNewUserCommand request, CancellationToken cancellationToken)
     {   
-        User user = new User
+        var user = new User
         {
             Email = request.Email,
             UserName = request.UserName,
@@ -36,9 +37,11 @@ internal class RegisterNewUserHandler : IRequestHandler<RegisterNewUserCommand, 
         IdentityResult roleResult = await _userManager.AddToRolesAsync(user, request.Roles.Select(role => role.Name!));
         roleResult.ThrowIfErrors();
 
-        return new RegisterNewUserResult
+        if (!(creationResult.Succeeded && roleResult.Succeeded && updateSecurityStampResult.Succeeded))
         {
-            Status = creationResult.Succeeded && roleResult.Succeeded && updateSecurityStampResult.Succeeded,
-        };
+            throw new Exception("Internal Server Error");
+        }
+
+        return Unit.Value;
     }
 }

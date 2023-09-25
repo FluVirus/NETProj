@@ -1,6 +1,7 @@
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Identity.Application;
 using Identity.Domain.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ public class App
             .AddWebApiServices(configuration);
 
         WebApplication app = builder.Build();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

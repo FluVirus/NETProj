@@ -3,6 +3,7 @@ using Identity.Domain.Exceptions;
 
 namespace Identity.WebApi.Middleware;
 
+//TODO: Handle other exceptions
 public class ErrorHandlerMiddleware : IMiddleware
 {
     private readonly ILogger<ErrorHandlerMiddleware> _logger;
@@ -21,7 +22,9 @@ public class ErrorHandlerMiddleware : IMiddleware
         catch (Exception exception) 
         {
             HttpResponse response = context.Response;
+
             _logger.LogError(exception: exception, message: exception.Message, args: exception.Data);
+
             switch (exception)
             {
                 case EmailNotFoundException:

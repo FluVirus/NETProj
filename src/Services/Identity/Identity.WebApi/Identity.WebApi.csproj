@@ -19,8 +19,6 @@
     <PackageReference Include="Duende.IdentityServer" Version="6.3.4" />
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.3.4" />
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.3.4" />
-    <PackageReference Include="FluentValidation" Version="11.7.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
     <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
